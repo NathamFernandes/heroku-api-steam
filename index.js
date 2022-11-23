@@ -1,13 +1,3 @@
-/* const axios = require('axios')
-  
-// Make request
-axios.get('http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=E9FCC1C5E3BA8368FDABE96C4027CA8D&steamid=76561198248619940')
-  
-  // Show response data
-  .then(res => console.log(res.data))
-  .catch(err => console.log(err))
-*/
-
 const SteamAPI = require('steamapi');
 const steam = new SteamAPI('E9FCC1C5E3BA8368FDABE96C4027CA8D');
 const express = require('express')
