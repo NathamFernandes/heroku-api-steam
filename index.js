@@ -1,5 +1,4 @@
-import sslRedirect from 'heroku-ssl-redirect';
-
+const sslRedirect = require('heroku-ssl-redirect').default
 const SteamAPI = require('steamapi');
 const steam = new SteamAPI('E9FCC1C5E3BA8368FDABE96C4027CA8D');
 const express = require('express')
