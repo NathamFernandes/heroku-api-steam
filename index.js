@@ -1,9 +1,13 @@
+import sslRedirect from 'heroku-ssl-redirect';
+
 const SteamAPI = require('steamapi');
 const steam = new SteamAPI('E9FCC1C5E3BA8368FDABE96C4027CA8D');
 const express = require('express')
 const cors = require('cors')
 const app = express()
 const port = process.env.PORT || 3000
+
+app.use(sslRedirect());
 
 app.use(cors());
 
