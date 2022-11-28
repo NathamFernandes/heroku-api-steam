@@ -1,43 +1,52 @@
-const sslRedirect = require('heroku-ssl-redirect').default
 const SteamAPI = require('steamapi');
-const steam = new SteamAPI('E9FCC1C5E3BA8368FDABE96C4027CA8D');
-const express = require('express')
-const cors = require('cors')
-const bodyParser = require('body-parser')
-const app = express()
-const port = process.env.PORT || 3000
+const bodyParser = require('body-parser');
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const steam = new SteamAPI('D01C2D2244E655C8B4BCBF3F43A38ED2');
+const port = process.env.PORT || 3000;
+var regExp = /[a-zA-Z]/g
 
 app.use(cors());
 
-// GAMBIARRA INSANA: AMBOS SÃO STRINGS, MAS O ID DA STEAM SEMPRE TEM 17 CARACTERES 
+const fetch = (...args) =>
+    import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
-app.get('/funcaoteste/:teste', (req, res) => {
-    console.log('Testagem.')
-    steam.getUserSummary('76561198248619940').thenthen(summary => { res.json(summary) })
+app.get('/', (req, res) => {
+    res.send("Tudo normal!")
 })
 
-app.get('/usuarios/:idusuario', (req, res) => {
-        console.log('teste2')
-        steam.getUserStats(req.params.idusuario.toString(), 730).then(
-                lol => { 
-            res.json(lol) }
-        )
-})
+// Verifica se o ID é alterado ou não, e depois manda os IDs para a API
+
+app.get('/usuarios/:idusuario', async (req, res) => {
+    if (regExp.test(req.params.idusuario)) {
+        let id = await steam.resolve('https://steamcommunity.com/id/' + req.params.idusuario)
+        var url = 'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=D01C2D2244E655C8B4BCBF3F43A38ED2&steamid=' + id
+    } else {
+        var url = 'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key=D01C2D2244E655C8B4BCBF3F43A38ED2&steamid=' + req.params.idusuario
+    }
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Host': 'api.steampowered.com',
+            'X-RapidAPI-Key': 'D01C2D2244E655C8B4BCBF3F43A38ED2'
+        }
+    };
+
+    fetch(url, options)
+        .then(res => res.json())
+        .then(json => console.log(json))
+        .catch(err => console.error('error:' + err));
+    try {
+        let response = await fetch(url, options);
+        response = await response.json();
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ msg: `Internal Server Error.` });
+    }
+});
 
 app.listen(port, () => {
     console.log('Servidor operacional...')
 })
-
-
-/*if (req.params.idusuario.length != 17) {
-    console.log('teste1')
-    let id = await steam.resolve(`https://steamcommunity.com/id/${req.params.idusuario}`)
-    res.json(await steam.getUserStats(id, 730))
-} else { }
-
-    if (req.params.idusuario.length != 17) {
-        console.log('teste1')
-        steam.resolve(`https://steamcommunity.com/id/${req.params.idusuario}`).then(id => { console.log(id)})
-        steam.getUserStats(id, 730).then(lol2 => { res.json(lol2)})
-    } 
-    */ 
