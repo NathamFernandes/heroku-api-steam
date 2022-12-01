@@ -47,6 +47,21 @@ app.get('/usuarios/:idusuario', async (req, res) => {
     }
 });
 
+app.get('/sumario/:idusuario', async (req, res) => {
+    try {
+        if (regExp.test(req.params.idusuario)) {
+            let id = await steam.resolve('https://steamcommunity.com/id/' + req.params.idusuario)
+            var sumario = await steam.getUserSummary(id)
+        } else {
+            var sumario = await steam.getUserSummary(req.params.idusuario)
+        }
+
+        res.json(sumario)
+    } catch {
+        res.status(500).json({ msg: `Internal Server Error.` });
+    }
+});
+
 app.listen(port, () => {
     console.log('Servidor operacional...')
 })
