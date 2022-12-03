@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const steam = new SteamAPI('D01C2D2244E655C8B4BCBF3F43A38ED2');
-const port = 443 || 3100;
+const port = process.env.PORT || 3000;
 const sslChecker = require('ssl-checker');
 var regExp = /[a-zA-Z]/g
 
